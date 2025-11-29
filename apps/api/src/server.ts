@@ -7,12 +7,14 @@ import {
   CreditTransaction,
   Artifact,
   Classroom,
+  StudentProfile,
   LessonPlan
 } from '@agenticcms/core';
 import dotenv from 'dotenv';
 import { createAuthMiddleware } from './auth.js';
 import { registerRoutes } from './routes.js';
 import { validateEnv } from './env.js';
+import { globalErrorHandler, notFoundHandler } from './error-handler.js';
 
 // Load environment variables
 dotenv.config();
@@ -37,7 +39,7 @@ await app.register(cors, {
 
 // Setup Remult with PostgreSQL
 const api = remultFastify({
-  entities: [User, CreditTransaction, Artifact, Classroom, LessonPlan],
+  entities: [User, CreditTransaction, Artifact, Classroom, StudentProfile, LessonPlan],
   dataProvider: createPostgresDataProvider({ connectionString: env.DATABASE_URL }),
   getUser: createAuthMiddleware(env),
 });
@@ -51,6 +53,10 @@ registerRoutes(app, env);
 app.get('/health', async () => {
   return { status: 'ok', timestamp: new Date().toISOString() };
 });
+
+// Register error handlers
+app.setErrorHandler(globalErrorHandler);
+app.setNotFoundHandler(notFoundHandler);
 
 const HOST = process.env.HOST || '0.0.0.0';
 

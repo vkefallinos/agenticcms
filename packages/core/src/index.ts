@@ -8,6 +8,7 @@ export { User, type UserRole } from './entities/User';
 export { CreditTransaction } from './entities/CreditTransaction';
 export { Artifact, type FileType } from './entities/Artifact';
 export { Classroom } from './entities/Classroom';
+export { StudentProfile } from './entities/StudentProfile';
 export { LessonPlan } from './entities/LessonPlan';
 
 // Hooks

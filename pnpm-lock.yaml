@@ -130,6 +130,9 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.3.1
+      reflect-metadata:
+        specifier: ^0.2.1
+        version: 0.2.2
       remult:
         specifier: ^0.26.0
         version: 0.26.23
@@ -2287,6 +2290,10 @@ packages:
 
   /reflect-metadata@0.1.14:
     resolution: {integrity: sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==}
+    dev: false
+
+  /reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
     dev: false
 
   /remult@0.26.23:

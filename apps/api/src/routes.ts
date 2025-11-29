@@ -1,10 +1,14 @@
 import type { FastifyInstance } from 'fastify';
 import { repo } from 'remult';
 import { User, CreditTransaction } from '@agenticcms/core';
-import { createSession, destroySession } from './auth';
+import { createToken } from './auth.js';
+import bcrypt from 'bcrypt';
+import type { Env } from './env.js';
 
-export function registerRoutes(app: FastifyInstance) {
-  // Login endpoint (simplified for MVP)
+const SALT_ROUNDS = 10;
+
+export function registerRoutes(app: FastifyInstance, env: Env) {
+  // Login endpoint
   app.post('/api/auth/login', async (request, reply) => {
     const { email, password } = request.body as { email: string; password: string };
 
@@ -15,19 +19,25 @@ export function registerRoutes(app: FastifyInstance) {
       return reply.code(401).send({ error: 'Invalid credentials' });
     }
 
-    // In production, use proper password hashing (bcrypt, argon2)
-    if (user.password !== password) {
+    // Compare hashed password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
       return reply.code(401).send({ error: 'Invalid credentials' });
     }
 
-    const sessionId = createSession({
-      id: user.id,
-      name: user.name,
-      roles: [user.role],
-    });
+    // Generate JWT token
+    const token = createToken(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      env
+    );
 
     return {
-      sessionId,
+      token,
       user: {
         id: user.id,
         name: user.name,
@@ -38,16 +48,14 @@ export function registerRoutes(app: FastifyInstance) {
     };
   });
 
-  // Logout endpoint
+  // Logout endpoint (with JWT, logout is handled client-side by removing token)
   app.post('/api/auth/logout', async (request, reply) => {
-    const sessionId = request.headers['x-session-id'] as string;
-    if (sessionId) {
-      destroySession(sessionId);
-    }
+    // No server-side action needed for JWT
+    // Client will remove the token from localStorage
     return { success: true };
   });
 
-  // Register endpoint (simplified for MVP)
+  // Register endpoint
   app.post('/api/auth/register', async (request, reply) => {
     const { email, password, name, role } = request.body as {
       email: string;
@@ -64,16 +72,31 @@ export function registerRoutes(app: FastifyInstance) {
       return reply.code(400).send({ error: 'User already exists' });
     }
 
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
     // Create user with initial credits
     const user = await userRepo.insert({
       email,
-      password, // In production, hash the password
+      password: hashedPassword,
       name,
       role: role as any,
       credits: 100, // Give new users 100 credits
     });
 
+    // Generate JWT token for immediate login
+    const token = createToken(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      env
+    );
+
     return {
+      token,
       user: {
         id: user.id,
         name: user.name,
@@ -86,8 +109,8 @@ export function registerRoutes(app: FastifyInstance) {
 
   // Mock payment endpoint - adds credits to user
   app.post('/api/credits/purchase', async (request, reply) => {
-    const sessionId = request.headers['x-session-id'] as string;
-    if (!sessionId) {
+    const remultInstance = (request as any).remult;
+    if (!remultInstance?.user) {
       return reply.code(401).send({ error: 'Unauthorized' });
     }
 
@@ -97,18 +120,14 @@ export function registerRoutes(app: FastifyInstance) {
       return reply.code(400).send({ error: 'Invalid amount' });
     }
 
-    // Get current user from session
-    // This is simplified - in production, validate the session properly
     const userRepo = repo(User);
     const transactionRepo = repo(CreditTransaction);
 
-    // For MVP, we'll just find the first user (replace with proper session handling)
-    const users = await userRepo.find();
-    if (users.length === 0) {
+    const user = await userRepo.findId(remultInstance.user.id);
+    if (!user) {
       return reply.code(404).send({ error: 'User not found' });
     }
 
-    const user = users[0];
     user.credits += amount;
     await userRepo.save(user);
 
@@ -128,18 +147,16 @@ export function registerRoutes(app: FastifyInstance) {
 
   // Get user credits
   app.get('/api/credits/balance', async (request, reply) => {
-    const sessionId = request.headers['x-session-id'] as string;
-    if (!sessionId) {
+    const remultInstance = (request as any).remult;
+    if (!remultInstance?.user) {
       return reply.code(401).send({ error: 'Unauthorized' });
     }
 
     const userRepo = repo(User);
-    const users = await userRepo.find();
-    if (users.length === 0) {
+    const user = await userRepo.findId(remultInstance.user.id);
+    if (!user) {
       return reply.code(404).send({ error: 'User not found' });
     }
-
-    const user = users[0];
 
     return {
       balance: user.credits,

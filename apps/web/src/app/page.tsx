@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { setSessionId } from '@/lib/remult';
+import { setAuthToken } from '@/lib/remult';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -29,7 +29,7 @@ export default function LoginPage() {
       }
 
       const data = await response.json();
-      setSessionId(data.sessionId);
+      setAuthToken(data.token);
       router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
@@ -52,8 +52,10 @@ export default function LoginPage() {
         throw new Error(data.error || 'Registration failed');
       }
 
-      // Auto-login after registration
-      await handleLogin(e);
+      const data = await response.json();
+      // Set token from registration response (backend now returns token)
+      setAuthToken(data.token);
+      router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     }

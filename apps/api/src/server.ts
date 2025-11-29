@@ -12,8 +12,18 @@ import {
 import dotenv from 'dotenv';
 import { createAuthMiddleware } from './auth.js';
 import { registerRoutes } from './routes.js';
+import { validateEnv } from './env.js';
 
+// Load environment variables
 dotenv.config();
+
+// Validate environment variables
+const env = validateEnv();
+
+console.log('✅ Environment variables validated');
+console.log(`📦 Environment: ${env.NODE_ENV}`);
+console.log(`🌐 API Port: ${env.PORT}`);
+console.log(`🔗 Frontend URL: ${env.FRONTEND_URL}`);
 
 const app = fastify({
   logger: true,
@@ -21,40 +31,33 @@ const app = fastify({
 
 // Enable CORS
 await app.register(cors, {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: env.FRONTEND_URL,
   credentials: true,
 });
-
-// Get connection string
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
-  console.warn('⚠️  DATABASE_URL not set. Database features will not work.');
-}
 
 // Setup Remult with PostgreSQL
 const api = remultFastify({
   entities: [User, CreditTransaction, Artifact, Classroom, LessonPlan],
-  dataProvider: connectionString ? createPostgresDataProvider({ connectionString }) : undefined,
-  getUser: createAuthMiddleware(),
+  dataProvider: createPostgresDataProvider({ connectionString: env.DATABASE_URL }),
+  getUser: createAuthMiddleware(env),
 });
 
 await app.register(api);
 
 // Register custom routes (credit purchases, etc.)
-registerRoutes(app);
+registerRoutes(app, env);
 
 // Health check
 app.get('/health', async () => {
   return { status: 'ok', timestamp: new Date().toISOString() };
 });
 
-const PORT = parseInt(process.env.PORT || '3001', 10);
 const HOST = process.env.HOST || '0.0.0.0';
 
 async function start() {
   try {
-    await app.listen({ port: PORT, host: HOST });
-    console.log(`🚀 Server running at http://${HOST}:${PORT}`);
+    await app.listen({ port: env.PORT, host: HOST });
+    console.log(`🚀 Server running at http://${HOST}:${env.PORT}`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);

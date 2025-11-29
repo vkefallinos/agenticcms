@@ -1,29 +1,18 @@
 {
   "project": "AgenticCMS",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "lastUpdated": "2025-11-29",
+  "completedInIteration2": [
+    "CRIT-001: JWT authentication implemented",
+    "CRIT-002: Password hashing with bcrypt implemented",
+    "IMPR-006: Session management fixed in remult.ts",
+    "DEV-003: Environment variable validation with Zod",
+    "TEST-001: Vitest testing infrastructure setup"
+  ],
   "categories": {
     "critical": {
       "description": "Must be completed before production deployment",
       "tasks": [
-        {
-          "id": "CRIT-001",
-          "title": "Implement proper authentication with JWT",
-          "description": "Replace session-based auth with JWT tokens for stateless authentication",
-          "priority": "high",
-          "effort": "medium",
-          "files": ["apps/api/src/auth.ts", "apps/web/src/lib/remult.ts"],
-          "dependencies": []
-        },
-        {
-          "id": "CRIT-002",
-          "title": "Add password hashing with bcrypt or argon2",
-          "description": "Currently passwords are stored in plain text. Implement proper hashing before save.",
-          "priority": "critical",
-          "effort": "low",
-          "files": ["packages/core/src/entities/User.ts", "apps/api/src/routes.ts"],
-          "dependencies": []
-        },
         {
           "id": "CRIT-003",
           "title": "Add database migrations support",
@@ -202,15 +191,6 @@
           "effort": "low",
           "files": ["apps/web/src/components/Skeleton.tsx"],
           "dependencies": []
-        },
-        {
-          "id": "IMPR-006",
-          "title": "Implement proper session management in remult.ts",
-          "description": "Fix session ID handling to properly update API client after login",
-          "priority": "high",
-          "effort": "low",
-          "files": ["apps/web/src/lib/remult.ts"],
-          "dependencies": []
         }
       ]
     },
@@ -218,25 +198,13 @@
       "description": "Testing infrastructure and coverage",
       "tasks": [
         {
-          "id": "TEST-001",
-          "title": "Set up unit testing with Vitest",
-          "description": "Configure Vitest, add test scripts to package.json files",
-          "priority": "high",
-          "effort": "low",
-          "files": [
-            "packages/core/vitest.config.ts",
-            "apps/api/vitest.config.ts"
-          ],
-          "dependencies": []
-        },
-        {
           "id": "TEST-002",
           "title": "Write unit tests for core entities",
           "description": "Test entity validation, business logic, and edge cases",
           "priority": "high",
           "effort": "high",
           "files": ["packages/core/src/**/*.test.ts"],
-          "dependencies": ["TEST-001"]
+          "dependencies": []
         },
         {
           "id": "TEST-003",
@@ -245,7 +213,7 @@
           "priority": "high",
           "effort": "medium",
           "files": ["packages/core/src/backend/agent-engine.test.ts"],
-          "dependencies": ["TEST-001"]
+          "dependencies": []
         },
         {
           "id": "TEST-004",
@@ -263,7 +231,7 @@
           "priority": "medium",
           "effort": "medium",
           "files": ["apps/api/src/**/*.test.ts"],
-          "dependencies": ["TEST-001"]
+          "dependencies": []
         }
       ]
     },
@@ -340,15 +308,6 @@
           "priority": "high",
           "effort": "medium",
           "files": [".github/workflows/ci.yml", ".github/workflows/deploy.yml"],
-          "dependencies": ["TEST-001"]
-        },
-        {
-          "id": "DEV-003",
-          "title": "Add environment variable validation",
-          "description": "Use zod or similar to validate required env vars on startup",
-          "priority": "medium",
-          "effort": "low",
-          "files": ["apps/api/src/env.ts", "apps/web/src/env.ts"],
           "dependencies": []
         },
         {
@@ -430,13 +389,17 @@
       "name": "MVP Complete",
       "description": "Minimum viable product ready for beta testing",
       "requiredTasks": [
+        "CRIT-004",
+        "TEST-002"
+      ],
+      "completedTasks": [
         "CRIT-001",
         "CRIT-002",
-        "CRIT-004",
         "IMPR-006",
         "TEST-001",
-        "TEST-002"
-      ]
+        "DEV-003"
+      ],
+      "status": "67% complete (4/6 tasks done)"
     },
     {
       "name": "Production Ready",
@@ -452,7 +415,8 @@
         "DEV-001",
         "DEV-002",
         "DEV-005"
-      ]
+      ],
+      "status": "0% complete (0/10 tasks done)"
     },
     {
       "name": "Full Feature Set",

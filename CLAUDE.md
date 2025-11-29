@@ -1,8 +1,8 @@
 # CLAUDE.md - Guide for AI Assistants
 
-**Last Updated:** November 29, 2025
+**Last Updated:** November 29, 2025 (Iteration 2)
 **Project:** AgenticCMS - Code-First Headless CMS with AI Agent Integration
-**Status:** ✅ Core Architecture Complete, Builds Successfully
+**Status:** ✅ Core Architecture + Security Complete, Builds Successfully
 
 ## 🎯 Quick Context
 
@@ -22,8 +22,9 @@ agenticcms/
 │   └── src/shared/         # @UIAction decorator system
 ├── apps/api/               # Fastify + Remult server (port 3001)
 ├── apps/web/               # Next.js 14 reference app (port 3000)
-├── iteration_1.md          # Complete documentation of what's been built
-├── todo.json               # Structured task list (48 tasks)
+├── iteration_1.md          # Iteration 1 documentation (architecture setup)
+├── iteration_2.md          # Iteration 2 documentation (security improvements)
+├── todo.json               # Structured task list (43 remaining tasks)
 └── README.md               # User-facing documentation
 ```
 
@@ -119,12 +120,22 @@ async startAgent() { ... }
    - Never delete or update transactions
 
 3. **Passwords:**
-   - Currently stored in PLAIN TEXT (⚠️ CRITICAL TODO)
+   - ✅ **SECURED (Iteration 2)**: Hashed with bcrypt (salt rounds: 10)
    - User.password has `includeInApi: false`
+   - Never store plain text passwords
+   - Use `bcrypt.hash()` on registration, `bcrypt.compare()` on login
 
 4. **Authentication:**
-   - Currently simple session-based (in-memory, not production-ready)
-   - Sessions via `x-session-id` header
+   - ✅ **SECURED (Iteration 2)**: JWT-based stateless authentication
+   - Tokens expire after 7 days
+   - Client sends `Authorization: Bearer <token>` header
+   - Backend verifies JWT signature on every request
+   - JWT_SECRET must be set in production (min 32 chars)
+
+5. **Environment Variables:**
+   - ✅ **VALIDATED (Iteration 2)**: Zod schema validates on server startup
+   - Required: `DATABASE_URL`, `OPENAI_API_KEY`, `JWT_SECRET` (production only)
+   - Server fails fast with clear errors if validation fails
 
 ### TypeScript Build Requirements
 
@@ -263,10 +274,27 @@ cd apps/web && pnpm dev    # Port 3000
 
 **Environment Variables Required:**
 
-- `apps/api/.env`: `DATABASE_URL`, `OPENAI_API_KEY`, `FRONTEND_URL`
+- `apps/api/.env`: `DATABASE_URL`, `OPENAI_API_KEY`, `JWT_SECRET`, `FRONTEND_URL`, `PORT`, `NODE_ENV`
 - `apps/web/.env.local`: `NEXT_PUBLIC_API_URL`
 
+**Note:** JWT_SECRET must be min 32 characters in production. In development, it auto-generates with a warning.
+
 (See `.env.example` files)
+
+**Running Tests:**
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+cd packages/core && pnpm test:watch
+
+# Run tests with UI
+cd packages/core && pnpm test:ui
+
+# Run tests with coverage
+pnpm test:coverage
+```
 
 ## 🐛 Known Issues & Gotchas
 
@@ -289,41 +317,60 @@ cd apps/web && pnpm dev    # Port 3000
 
 ### Runtime Issues
 
-1. **Session not persisting**
-   - Currently in-memory sessions, lost on server restart
-   - Use localStorage on client to store sessionId
+1. **JWT Token Issues**
+   - ✅ **FIXED (Iteration 2)**: Now using JWT tokens stored in localStorage
+   - Tokens persist across page refreshes and server restarts
+   - If auth fails, check that JWT_SECRET is set and consistent
+   - Tokens expire after 7 days - users need to re-login
 
 2. **Credits not updating**
    - Check that `allowApiUpdate: false` is set
    - Only modify via backend methods
+   - Verify user ID is correctly extracted from JWT token
 
 3. **AI generation not starting**
-   - Verify `OPENAI_API_KEY` is set
+   - Verify `OPENAI_API_KEY` is set and valid
    - Check user has >= 10 credits
    - Look for errors in agent status/error fields
+   - Check JWT token is being sent in Authorization header
+
+4. **Environment validation errors**
+   - Server now validates env vars on startup (Iteration 2)
+   - If server fails to start, check error messages for missing variables
+   - Ensure JWT_SECRET is set in production
 
 ## 📚 Key Files to Read
 
 **Before making changes, read these in order:**
 
-1. **iteration_1.md** - Complete documentation of current iteration
-2. **todo.json** - Task list (critical tasks marked CRIT-001, etc.)
-3. **README.md** - User-facing setup guide
-4. **packages/core/src/entities/AgentResource.ts** - Agent base class
-5. **packages/core/src/backend/agent-engine.ts** - Agent execution flow
-6. **packages/core/src/entities/LessonPlan.ts** - Reference AI agent implementation
+1. **iteration_2.md** - Latest iteration (security & infrastructure improvements)
+2. **iteration_1.md** - Initial iteration (architecture setup)
+3. **todo.json** - Task list (43 remaining tasks, 5 completed in iteration 2)
+4. **README.md** - User-facing setup guide
+5. **apps/api/src/env.ts** - Environment validation (NEW in iteration 2)
+6. **apps/api/src/auth.ts** - JWT authentication (UPDATED in iteration 2)
+7. **packages/core/src/entities/AgentResource.ts** - Agent base class
+8. **packages/core/src/backend/agent-engine.ts** - Agent execution flow
+9. **packages/core/src/entities/LessonPlan.ts** - Reference AI agent implementation
 
 ## 🎯 Current Priorities (from todo.json)
 
-**Critical (must do before production):**
-- CRIT-002: Password hashing (bcrypt/argon2)
-- CRIT-001: JWT authentication
-- IMPR-006: Fix session management in remult.ts
+**✅ Completed in Iteration 2:**
+- ✅ CRIT-002: Password hashing with bcrypt
+- ✅ CRIT-001: JWT authentication
+- ✅ IMPR-006: Session management fixed (JWT-based)
+- ✅ DEV-003: Environment variable validation
+- ✅ TEST-001: Vitest testing infrastructure
 
-**High Value (for MVP):**
-- FEAT-001: Role-based access control
-- TEST-001: Set up Vitest
-- TEST-002: Entity unit tests
+**Critical (must do before production):**
+- CRIT-003: Database migrations support
+- CRIT-004: Comprehensive error handling
+- CRIT-005: Rate limiting and API security
+
+**High Value (for MVP - 67% complete!):**
+- TEST-002: Write unit tests for all entities
+- FEAT-001: Role-based access control (unblocked by JWT)
+- FEAT-002: Multi-tenant support
 
 ## 💡 Tips for Working with This Codebase
 

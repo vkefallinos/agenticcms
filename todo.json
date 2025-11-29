@@ -1,0 +1,475 @@
+{
+  "project": "AgenticCMS",
+  "version": "0.1.0",
+  "lastUpdated": "2025-11-29",
+  "categories": {
+    "critical": {
+      "description": "Must be completed before production deployment",
+      "tasks": [
+        {
+          "id": "CRIT-001",
+          "title": "Implement proper authentication with JWT",
+          "description": "Replace session-based auth with JWT tokens for stateless authentication",
+          "priority": "high",
+          "effort": "medium",
+          "files": ["apps/api/src/auth.ts", "apps/web/src/lib/remult.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "CRIT-002",
+          "title": "Add password hashing with bcrypt or argon2",
+          "description": "Currently passwords are stored in plain text. Implement proper hashing before save.",
+          "priority": "critical",
+          "effort": "low",
+          "files": ["packages/core/src/entities/User.ts", "apps/api/src/routes.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "CRIT-003",
+          "title": "Add database migrations support",
+          "description": "Implement proper migration system for schema changes (use Remult migrations or custom solution)",
+          "priority": "high",
+          "effort": "medium",
+          "files": ["apps/api/src/server.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "CRIT-004",
+          "title": "Add comprehensive error handling",
+          "description": "Implement global error handlers, validation error formatting, and user-friendly error messages",
+          "priority": "high",
+          "effort": "medium",
+          "files": ["apps/api/src/server.ts", "apps/web/src/lib/remult.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "CRIT-005",
+          "title": "Add rate limiting and API security",
+          "description": "Implement rate limiting, CSRF protection, and request validation",
+          "priority": "high",
+          "effort": "medium",
+          "files": ["apps/api/src/server.ts"],
+          "dependencies": ["CRIT-001"]
+        }
+      ]
+    },
+    "features": {
+      "description": "New features to complete the PRD requirements",
+      "tasks": [
+        {
+          "id": "FEAT-001",
+          "title": "Implement role-based access control (RBAC)",
+          "description": "Add permission checks for different user roles (admin, school_admin, teacher, parent, student)",
+          "priority": "high",
+          "effort": "high",
+          "files": [
+            "packages/core/src/entities/User.ts",
+            "packages/core/src/entities/StaticResource.ts",
+            "packages/core/src/shared/permissions.ts"
+          ],
+          "dependencies": ["CRIT-001"]
+        },
+        {
+          "id": "FEAT-002",
+          "title": "Implement multi-tenant support with school isolation",
+          "description": "Add organizationId filtering to all queries, ensure data isolation between schools",
+          "priority": "high",
+          "effort": "high",
+          "files": [
+            "packages/core/src/entities/BaseRecord.ts",
+            "apps/api/src/server.ts"
+          ],
+          "dependencies": ["FEAT-001"]
+        },
+        {
+          "id": "FEAT-003",
+          "title": "Add StudentProfile entity",
+          "description": "Implement StudentProfile as StaticResource with fields: studentName, needs, learningStyle",
+          "priority": "medium",
+          "effort": "low",
+          "files": [
+            "packages/core/src/entities/StudentProfile.ts",
+            "packages/core/src/index.ts"
+          ],
+          "dependencies": []
+        },
+        {
+          "id": "FEAT-004",
+          "title": "Implement Stripe integration for credit purchases",
+          "description": "Add Stripe payment processing for purchasing credits, webhook handling for payment confirmation",
+          "priority": "medium",
+          "effort": "high",
+          "files": [
+            "apps/api/src/routes/payments.ts",
+            "apps/web/src/app/credits/page.tsx"
+          ],
+          "dependencies": ["CRIT-001"]
+        },
+        {
+          "id": "FEAT-005",
+          "title": "Add PDF artifact generation",
+          "description": "Extend LessonPlan to generate PDF artifacts using a library like puppeteer or pdfkit",
+          "priority": "medium",
+          "effort": "medium",
+          "files": ["packages/core/src/entities/LessonPlan.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "FEAT-006",
+          "title": "Implement file upload to S3/cloud storage",
+          "description": "Replace mock storage URLs with actual S3 or cloud storage integration",
+          "priority": "medium",
+          "effort": "medium",
+          "files": [
+            "packages/core/src/entities/Artifact.ts",
+            "apps/api/src/storage.ts"
+          ],
+          "dependencies": []
+        },
+        {
+          "id": "FEAT-007",
+          "title": "Add user invitation system",
+          "description": "Allow school admins to invite teachers, teachers to invite students/parents",
+          "priority": "medium",
+          "effort": "medium",
+          "files": [
+            "apps/api/src/routes/invitations.ts",
+            "apps/web/src/app/invite/page.tsx"
+          ],
+          "dependencies": ["FEAT-001"]
+        },
+        {
+          "id": "FEAT-008",
+          "title": "Implement parent and student views",
+          "description": "Create read-only dashboards for parents and students to view lessons",
+          "priority": "low",
+          "effort": "medium",
+          "files": [
+            "apps/web/src/app/parent/page.tsx",
+            "apps/web/src/app/student/page.tsx"
+          ],
+          "dependencies": ["FEAT-001"]
+        }
+      ]
+    },
+    "improvements": {
+      "description": "Code quality and performance improvements",
+      "tasks": [
+        {
+          "id": "IMPR-001",
+          "title": "Add comprehensive TypeScript types",
+          "description": "Remove 'any' types, add proper generic constraints, improve type safety across the codebase",
+          "priority": "medium",
+          "effort": "medium",
+          "files": ["packages/core/src/**/*.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "IMPR-002",
+          "title": "Optimize database queries",
+          "description": "Add indexes, implement query optimization, add database connection pooling configuration",
+          "priority": "medium",
+          "effort": "low",
+          "files": ["apps/api/src/server.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "IMPR-003",
+          "title": "Add caching layer",
+          "description": "Implement Redis caching for frequently accessed data (classrooms, users)",
+          "priority": "low",
+          "effort": "medium",
+          "files": ["apps/api/src/cache.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "IMPR-004",
+          "title": "Improve error messages in UI",
+          "description": "Add toast notifications, better error state handling, user-friendly error messages",
+          "priority": "medium",
+          "effort": "low",
+          "files": [
+            "apps/web/src/components/Toast.tsx",
+            "apps/web/src/app/**/*.tsx"
+          ],
+          "dependencies": []
+        },
+        {
+          "id": "IMPR-005",
+          "title": "Add loading skeletons",
+          "description": "Replace spinners with proper skeleton loading states for better UX",
+          "priority": "low",
+          "effort": "low",
+          "files": ["apps/web/src/components/Skeleton.tsx"],
+          "dependencies": []
+        },
+        {
+          "id": "IMPR-006",
+          "title": "Implement proper session management in remult.ts",
+          "description": "Fix session ID handling to properly update API client after login",
+          "priority": "high",
+          "effort": "low",
+          "files": ["apps/web/src/lib/remult.ts"],
+          "dependencies": []
+        }
+      ]
+    },
+    "testing": {
+      "description": "Testing infrastructure and coverage",
+      "tasks": [
+        {
+          "id": "TEST-001",
+          "title": "Set up unit testing with Vitest",
+          "description": "Configure Vitest, add test scripts to package.json files",
+          "priority": "high",
+          "effort": "low",
+          "files": [
+            "packages/core/vitest.config.ts",
+            "apps/api/vitest.config.ts"
+          ],
+          "dependencies": []
+        },
+        {
+          "id": "TEST-002",
+          "title": "Write unit tests for core entities",
+          "description": "Test entity validation, business logic, and edge cases",
+          "priority": "high",
+          "effort": "high",
+          "files": ["packages/core/src/**/*.test.ts"],
+          "dependencies": ["TEST-001"]
+        },
+        {
+          "id": "TEST-003",
+          "title": "Write integration tests for agent flow",
+          "description": "Test the complete agent execution pipeline with mocked AI responses",
+          "priority": "high",
+          "effort": "medium",
+          "files": ["packages/core/src/backend/agent-engine.test.ts"],
+          "dependencies": ["TEST-001"]
+        },
+        {
+          "id": "TEST-004",
+          "title": "Add E2E tests with Playwright",
+          "description": "Test critical user flows: register, create classroom, generate lesson",
+          "priority": "medium",
+          "effort": "high",
+          "files": ["apps/web/e2e/**/*.spec.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "TEST-005",
+          "title": "Add API endpoint tests",
+          "description": "Test all custom API routes with various scenarios and edge cases",
+          "priority": "medium",
+          "effort": "medium",
+          "files": ["apps/api/src/**/*.test.ts"],
+          "dependencies": ["TEST-001"]
+        }
+      ]
+    },
+    "documentation": {
+      "description": "Documentation and developer experience",
+      "tasks": [
+        {
+          "id": "DOC-001",
+          "title": "Add JSDoc comments to all public APIs",
+          "description": "Document all exported functions, hooks, and entity classes",
+          "priority": "medium",
+          "effort": "medium",
+          "files": ["packages/core/src/**/*.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "DOC-002",
+          "title": "Create API documentation",
+          "description": "Generate API docs using TypeDoc or similar tool",
+          "priority": "low",
+          "effort": "low",
+          "files": ["docs/api/"],
+          "dependencies": ["DOC-001"]
+        },
+        {
+          "id": "DOC-003",
+          "title": "Add architecture diagrams",
+          "description": "Create visual diagrams for entity relationships, agent flow, and system architecture",
+          "priority": "low",
+          "effort": "low",
+          "files": ["docs/diagrams/"],
+          "dependencies": []
+        },
+        {
+          "id": "DOC-004",
+          "title": "Create developer onboarding guide",
+          "description": "Step-by-step guide for new developers to set up and understand the codebase",
+          "priority": "medium",
+          "effort": "low",
+          "files": ["docs/DEVELOPER_GUIDE.md"],
+          "dependencies": []
+        },
+        {
+          "id": "DOC-005",
+          "title": "Add example custom AgentResource tutorial",
+          "description": "Complete tutorial showing how to create a custom agent (e.g., QuizGenerator)",
+          "priority": "low",
+          "effort": "medium",
+          "files": ["docs/tutorials/CUSTOM_AGENT.md"],
+          "dependencies": []
+        }
+      ]
+    },
+    "devops": {
+      "description": "Deployment and infrastructure",
+      "tasks": [
+        {
+          "id": "DEV-001",
+          "title": "Create Docker configuration",
+          "description": "Add Dockerfile for API and web apps, docker-compose for local development",
+          "priority": "high",
+          "effort": "medium",
+          "files": [
+            "apps/api/Dockerfile",
+            "apps/web/Dockerfile",
+            "docker-compose.yml"
+          ],
+          "dependencies": []
+        },
+        {
+          "id": "DEV-002",
+          "title": "Set up CI/CD pipeline",
+          "description": "Configure GitHub Actions for automated testing, linting, and deployment",
+          "priority": "high",
+          "effort": "medium",
+          "files": [".github/workflows/ci.yml", ".github/workflows/deploy.yml"],
+          "dependencies": ["TEST-001"]
+        },
+        {
+          "id": "DEV-003",
+          "title": "Add environment variable validation",
+          "description": "Use zod or similar to validate required env vars on startup",
+          "priority": "medium",
+          "effort": "low",
+          "files": ["apps/api/src/env.ts", "apps/web/src/env.ts"],
+          "dependencies": []
+        },
+        {
+          "id": "DEV-004",
+          "title": "Create deployment documentation",
+          "description": "Document deployment process for Vercel/Railway/DigitalOcean",
+          "priority": "medium",
+          "effort": "low",
+          "files": ["docs/DEPLOYMENT.md"],
+          "dependencies": []
+        },
+        {
+          "id": "DEV-005",
+          "title": "Set up monitoring and logging",
+          "description": "Integrate Sentry for error tracking, add structured logging",
+          "priority": "medium",
+          "effort": "medium",
+          "files": ["apps/api/src/monitoring.ts"],
+          "dependencies": []
+        }
+      ]
+    },
+    "polish": {
+      "description": "UI/UX improvements and polish",
+      "tasks": [
+        {
+          "id": "POL-001",
+          "title": "Add responsive design improvements",
+          "description": "Ensure all pages work well on mobile devices",
+          "priority": "medium",
+          "effort": "medium",
+          "files": ["apps/web/src/app/**/*.tsx"],
+          "dependencies": []
+        },
+        {
+          "id": "POL-002",
+          "title": "Implement dark mode support",
+          "description": "Add theme toggle and dark mode styles",
+          "priority": "low",
+          "effort": "medium",
+          "files": [
+            "apps/web/src/app/globals.css",
+            "apps/web/tailwind.config.js"
+          ],
+          "dependencies": []
+        },
+        {
+          "id": "POL-003",
+          "title": "Add accessibility improvements",
+          "description": "ARIA labels, keyboard navigation, screen reader support",
+          "priority": "medium",
+          "effort": "medium",
+          "files": ["apps/web/src/app/**/*.tsx"],
+          "dependencies": []
+        },
+        {
+          "id": "POL-004",
+          "title": "Create reusable UI component library",
+          "description": "Extract common components (Button, Input, Card, Modal) into shared library",
+          "priority": "low",
+          "effort": "medium",
+          "files": ["apps/web/src/components/ui/**/*.tsx"],
+          "dependencies": []
+        },
+        {
+          "id": "POL-005",
+          "title": "Add animations and transitions",
+          "description": "Smooth page transitions, loading animations, micro-interactions",
+          "priority": "low",
+          "effort": "low",
+          "files": ["apps/web/src/app/globals.css"],
+          "dependencies": []
+        }
+      ]
+    }
+  },
+  "milestones": [
+    {
+      "name": "MVP Complete",
+      "description": "Minimum viable product ready for beta testing",
+      "requiredTasks": [
+        "CRIT-001",
+        "CRIT-002",
+        "CRIT-004",
+        "IMPR-006",
+        "TEST-001",
+        "TEST-002"
+      ]
+    },
+    {
+      "name": "Production Ready",
+      "description": "Ready for production deployment with paying customers",
+      "requiredTasks": [
+        "CRIT-003",
+        "CRIT-005",
+        "FEAT-001",
+        "FEAT-002",
+        "FEAT-004",
+        "TEST-003",
+        "TEST-005",
+        "DEV-001",
+        "DEV-002",
+        "DEV-005"
+      ]
+    },
+    {
+      "name": "Full Feature Set",
+      "description": "All PRD features implemented",
+      "requiredTasks": [
+        "FEAT-003",
+        "FEAT-005",
+        "FEAT-006",
+        "FEAT-007",
+        "FEAT-008"
+      ]
+    }
+  ],
+  "notes": [
+    "Priority levels: critical > high > medium > low",
+    "Effort estimates: low (1-4 hours), medium (4-8 hours), high (8+ hours)",
+    "Dependencies must be completed before starting dependent tasks",
+    "All tasks should include unit tests where applicable"
+  ]
+}

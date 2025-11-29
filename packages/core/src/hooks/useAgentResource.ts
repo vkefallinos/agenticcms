@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { repo } from 'remult';
 import type { AgentResource } from '../entities/AgentResource';
-import type { Artifact } from '../entities/Artifact';
+import { Artifact } from '../entities/Artifact';
 import { getUIActions, type UIActionMetadata } from '../shared/decorators';
 
 export interface AgentResourceAction {
@@ -34,8 +34,8 @@ export function useAgentResource<T extends AgentResource>(
     const unsubscribe = repository.liveQuery({
       where: { id } as any,
     }).subscribe({
-      next: (items) => {
-        setRecord(items[0]);
+      next: (info) => {
+        setRecord(info.items[0]);
         setIsLoading(false);
       },
       error: (error) => {

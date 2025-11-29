@@ -23,8 +23,8 @@ export function useStaticResource<T extends StaticResource>(
     const unsubscribe = repository.liveQuery({
       where: where || {},
     }).subscribe({
-      next: (data) => {
-        setItems(data);
+      next: (info) => {
+        setItems(info.items);
         setIsLoading(false);
       },
       error: (error) => {
@@ -38,7 +38,9 @@ export function useStaticResource<T extends StaticResource>(
 
   const create = async (data: Partial<T>): Promise<T> => {
     const repository = repo(EntityClass);
-    return await repository.insert(data as any);
+    const result = await repository.insert(data as any);
+    // Remult insert with single object returns array, take first item
+    return (Array.isArray(result) ? result[0] : result) as T;
   };
 
   const update = async (item: T): Promise<T> => {

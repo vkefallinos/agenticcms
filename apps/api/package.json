@@ -14,7 +14,6 @@
     "fastify": "^4.25.0",
     "@fastify/cors": "^9.0.0",
     "remult": "^0.26.0",
-    "remult-fastify": "^0.26.0",
     "pg": "^8.11.0",
     "dotenv": "^16.3.0",
     "ai": "^3.0.0",

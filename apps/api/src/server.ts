@@ -2,10 +2,16 @@ import fastify from 'fastify';
 import cors from '@fastify/cors';
 import { remultFastify } from 'remult/remult-fastify';
 import { createPostgresDataProvider } from 'remult/postgres';
-import * as entities from '@agenticcms/core';
+import {
+  User,
+  CreditTransaction,
+  Artifact,
+  Classroom,
+  LessonPlan
+} from '@agenticcms/core';
 import dotenv from 'dotenv';
-import { createAuthMiddleware } from './auth';
-import { registerRoutes } from './routes';
+import { createAuthMiddleware } from './auth.js';
+import { registerRoutes } from './routes.js';
 
 dotenv.config();
 
@@ -19,20 +25,20 @@ await app.register(cors, {
   credentials: true,
 });
 
+// Get connection string
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  console.warn('⚠️  DATABASE_URL not set. Database features will not work.');
+}
+
 // Setup Remult with PostgreSQL
 const api = remultFastify({
-  entities: Object.values(entities).filter(e => typeof e === 'function' && e.prototype),
-  dataProvider: async () => {
-    const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) {
-      throw new Error('DATABASE_URL environment variable is required');
-    }
-    return createPostgresDataProvider({ connectionString });
-  },
+  entities: [User, CreditTransaction, Artifact, Classroom, LessonPlan],
+  dataProvider: connectionString ? createPostgresDataProvider({ connectionString }) : undefined,
   getUser: createAuthMiddleware(),
 });
 
-app.register(api);
+await app.register(api);
 
 // Register custom routes (credit purchases, etc.)
 registerRoutes(app);

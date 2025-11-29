@@ -1,0 +1,30 @@
+{
+  "name": "@agenticcms/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@agenticcms/core": "workspace:*",
+    "fastify": "^4.25.0",
+    "@fastify/cors": "^9.0.0",
+    "remult": "^0.26.0",
+    "remult-fastify": "^0.26.0",
+    "pg": "^8.11.0",
+    "dotenv": "^16.3.0",
+    "ai": "^3.0.0",
+    "@ai-sdk/openai": "^0.0.50",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/pg": "^8.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}

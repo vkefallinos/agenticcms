@@ -2,6 +2,56 @@
 
 import { remult } from 'remult';
 
+/**
+ * HTTP client wrapper with error handling
+ */
+async function httpClientWithErrorHandling(
+  url: URL | RequestInfo,
+  init?: RequestInit
+): Promise<Response> {
+  try {
+    const response = await fetch(url, init);
+
+    // If response is not ok, try to parse error details
+    if (!response.ok) {
+      let errorData: any;
+      try {
+        errorData = await response.json();
+      } catch {
+        // If JSON parsing fails, use status text
+        errorData = { message: response.statusText };
+      }
+
+      // Create error with enhanced information
+      const error: any = new Error(errorData.message || response.statusText);
+      error.httpStatusCode = response.status;
+      error.httpStatusText = response.statusText;
+      error.modelState = errorData.fields;
+      error.code = errorData.code;
+
+      throw error;
+    }
+
+    return response;
+  } catch (error: any) {
+    // If it's already our formatted error, rethrow it
+    if (error.httpStatusCode) {
+      throw error;
+    }
+
+    // Network or other errors
+    if (error instanceof TypeError) {
+      const networkError: any = new Error('Network error: Unable to connect to the server');
+      networkError.httpStatusCode = 0;
+      networkError.networkError = true;
+      throw networkError;
+    }
+
+    // Rethrow unknown errors
+    throw error;
+  }
+}
+
 // Configure Remult to connect to the API server
 export const api = remult;
 
@@ -15,11 +65,14 @@ if (typeof window !== 'undefined') {
       const headers = new Headers(init?.headers);
       headers.set('Authorization', `Bearer ${token}`);
 
-      return fetch(url, {
+      return httpClientWithErrorHandling(url, {
         ...init,
         headers,
       });
     };
+  } else {
+    // Even without token, use error handling wrapper
+    api.apiClient.httpClient = httpClientWithErrorHandling;
   }
 }
 
@@ -36,7 +89,7 @@ export function setAuthToken(token: string) {
       const headers = new Headers(init?.headers);
       headers.set('Authorization', `Bearer ${token}`);
 
-      return fetch(url, {
+      return httpClientWithErrorHandling(url, {
         ...init,
         headers,
       });
@@ -50,7 +103,7 @@ export function setAuthToken(token: string) {
 export function clearAuth() {
   if (typeof window !== 'undefined') {
     localStorage.removeItem('authToken');
-    api.apiClient.httpClient = fetch;
+    api.apiClient.httpClient = httpClientWithErrorHandling;
   }
 }
 

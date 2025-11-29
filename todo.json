@@ -1,6 +1,6 @@
 {
   "project": "AgenticCMS",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "lastUpdated": "2025-11-29",
   "completedInIteration2": [
     "CRIT-001: JWT authentication implemented",
@@ -8,6 +8,11 @@
     "IMPR-006: Session management fixed in remult.ts",
     "DEV-003: Environment variable validation with Zod",
     "TEST-001: Vitest testing infrastructure setup"
+  ],
+  "completedInIteration3": [
+    "CRIT-004: Comprehensive error handling implemented",
+    "TEST-002: Unit tests for all core entities (192 tests)",
+    "FEAT-003: StudentProfile entity added"
   ],
   "categories": {
     "critical": {
@@ -20,15 +25,6 @@
           "priority": "high",
           "effort": "medium",
           "files": ["apps/api/src/server.ts"],
-          "dependencies": []
-        },
-        {
-          "id": "CRIT-004",
-          "title": "Add comprehensive error handling",
-          "description": "Implement global error handlers, validation error formatting, and user-friendly error messages",
-          "priority": "high",
-          "effort": "medium",
-          "files": ["apps/api/src/server.ts", "apps/web/src/lib/remult.ts"],
           "dependencies": []
         },
         {
@@ -69,18 +65,6 @@
             "apps/api/src/server.ts"
           ],
           "dependencies": ["FEAT-001"]
-        },
-        {
-          "id": "FEAT-003",
-          "title": "Add StudentProfile entity",
-          "description": "Implement StudentProfile as StaticResource with fields: studentName, needs, learningStyle",
-          "priority": "medium",
-          "effort": "low",
-          "files": [
-            "packages/core/src/entities/StudentProfile.ts",
-            "packages/core/src/index.ts"
-          ],
-          "dependencies": []
         },
         {
           "id": "FEAT-004",
@@ -197,15 +181,6 @@
     "testing": {
       "description": "Testing infrastructure and coverage",
       "tasks": [
-        {
-          "id": "TEST-002",
-          "title": "Write unit tests for core entities",
-          "description": "Test entity validation, business logic, and edge cases",
-          "priority": "high",
-          "effort": "high",
-          "files": ["packages/core/src/**/*.test.ts"],
-          "dependencies": []
-        },
         {
           "id": "TEST-003",
           "title": "Write integration tests for agent flow",
@@ -388,18 +363,17 @@
     {
       "name": "MVP Complete",
       "description": "Minimum viable product ready for beta testing",
-      "requiredTasks": [
-        "CRIT-004",
-        "TEST-002"
-      ],
+      "requiredTasks": [],
       "completedTasks": [
         "CRIT-001",
         "CRIT-002",
+        "CRIT-004",
         "IMPR-006",
         "TEST-001",
+        "TEST-002",
         "DEV-003"
       ],
-      "status": "67% complete (4/6 tasks done)"
+      "status": "✅ 100% complete (7/7 tasks done)"
     },
     {
       "name": "Production Ready",
@@ -422,12 +396,15 @@
       "name": "Full Feature Set",
       "description": "All PRD features implemented",
       "requiredTasks": [
-        "FEAT-003",
         "FEAT-005",
         "FEAT-006",
         "FEAT-007",
         "FEAT-008"
-      ]
+      ],
+      "completedTasks": [
+        "FEAT-003"
+      ],
+      "status": "20% complete (1/5 tasks done)"
     }
   ],
   "notes": [

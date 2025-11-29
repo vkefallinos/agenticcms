@@ -1,8 +1,72 @@
 # CLAUDE.md - Guide for AI Assistants
 
-**Last Updated:** November 29, 2025 (Iteration 2)
+**Last Updated:** November 29, 2025 (Iteration 3)
 **Project:** AgenticCMS - Code-First Headless CMS with AI Agent Integration
-**Status:** ✅ Core Architecture + Security Complete, Builds Successfully
+**Status:** ✅ MVP Complete! Core Architecture + Security + Testing Complete, All 192 Tests Passing
+
+## ⚠️ CRITICAL: MUST DO IN EVERY ITERATION
+
+**READ THIS FIRST BEFORE DOING ANY WORK!**
+
+When completing an iteration, you MUST do ALL of the following:
+
+### 1. 📝 Create iteration_X.md File
+- Document what was built with code examples
+- **Document what went WRONG (mistakes section)**
+- Document lessons learned
+- Include build/test status
+
+### 2. ✅ Update todo.json
+- **REMOVE completed tasks from their categories**
+- Add `completedInIterationX` array
+- Update version number (increment by 0.1)
+- Update milestone progress percentages
+
+### 3. 📚 Update CLAUDE.md
+- Update "Last Updated" date and iteration number
+- Update status line
+- Add new patterns/gotchas discovered
+- Update statistics (files, tests, etc.)
+
+### 4. 🔨 ALWAYS Build & Test Incrementally
+- **Test after EACH file creation:** `pnpm test`
+- **Build after EACH feature:** `pnpm build`
+- **Full build at end:** `pnpm build` from root
+- **Never** write all code first, then test
+
+### 5. 🧪 Write Tests for New Code IMMEDIATELY
+- Create .test.ts file right after creating entity/function
+- Run tests before moving to next feature
+- Fix failures immediately, don't batch them
+
+### 6. 💾 Commit and Push
+- Create descriptive commit messages
+- Push to the correct branch (starts with `claude/`)
+- Never push to main/master
+
+## 📖 Mistakes from Previous Iterations (LEARN FROM THESE!)
+
+### Iteration 3 Mistakes:
+
+1. **❌ Didn't Test Incrementally**
+   - Wrote all code first, then tried to build
+   - Result: Multiple errors to fix
+   - **Fix:** Test after each file
+
+2. **❌ Missing Dependency**
+   - Forgot `reflect-metadata` for decorators
+   - Result: Runtime errors
+   - **Fix:** Check dependencies BEFORE writing code
+
+3. **❌ Wrong Type Assumptions**
+   - Assumed fields exist without checking types
+   - Result: TypeScript errors
+   - **Fix:** Check type definitions first
+
+4. **❌ Didn't Update Docs Until End**
+   - Waited to create iteration file
+   - Result: Had to remember everything
+   - **Fix:** Update docs as you go
 
 ## 🎯 Quick Context
 
@@ -16,7 +80,7 @@ You are working on **AgenticCMS**, a TypeScript monorepo that implements a headl
 ```
 agenticcms/
 ├── packages/core/          # Shared business logic (THE BRAIN)
-│   ├── src/entities/       # 8 entity classes (User, Classroom, LessonPlan, etc.)
+│   ├── src/entities/       # 9 entity classes (User, Classroom, StudentProfile, LessonPlan, etc.)
 │   ├── src/hooks/          # 2 headless React hooks
 │   ├── src/backend/        # AI agent execution engine
 │   └── src/shared/         # @UIAction decorator system
@@ -24,7 +88,8 @@ agenticcms/
 ├── apps/web/               # Next.js 14 reference app (port 3000)
 ├── iteration_1.md          # Iteration 1 documentation (architecture setup)
 ├── iteration_2.md          # Iteration 2 documentation (security improvements)
-├── todo.json               # Structured task list (43 remaining tasks)
+├── iteration_3.md          # Iteration 3 documentation (testing & error handling)
+├── todo.json               # Structured task list (38 remaining tasks, 10 completed)
 └── README.md               # User-facing documentation
 ```
 
@@ -355,22 +420,25 @@ pnpm test:coverage
 
 ## 🎯 Current Priorities (from todo.json)
 
-**✅ Completed in Iteration 2:**
-- ✅ CRIT-002: Password hashing with bcrypt
-- ✅ CRIT-001: JWT authentication
-- ✅ IMPR-006: Session management fixed (JWT-based)
-- ✅ DEV-003: Environment variable validation
-- ✅ TEST-001: Vitest testing infrastructure
+**✅ Completed in Iteration 3:**
+- ✅ CRIT-004: Comprehensive error handling
+- ✅ TEST-002: Write unit tests for all entities (192 tests!)
+- ✅ FEAT-003: StudentProfile entity
+
+**✅ MVP Milestone - COMPLETE! 🎉**
+All 7 MVP tasks done! Ready for beta testing.
 
 **Critical (must do before production):**
 - CRIT-003: Database migrations support
-- CRIT-004: Comprehensive error handling
 - CRIT-005: Rate limiting and API security
 
-**High Value (for MVP - 67% complete!):**
-- TEST-002: Write unit tests for all entities
+**High Value (for Production):**
 - FEAT-001: Role-based access control (unblocked by JWT)
 - FEAT-002: Multi-tenant support
+- TEST-003: Integration tests for agent flow
+- TEST-005: API endpoint tests
+- DEV-001: Docker configuration
+- DEV-002: CI/CD pipeline
 
 ## 💡 Tips for Working with This Codebase
 

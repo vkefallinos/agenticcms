@@ -15,6 +15,7 @@ import { createAuthMiddleware } from './auth.js';
 import { registerRoutes } from './routes.js';
 import { validateEnv } from './env.js';
 import { globalErrorHandler, notFoundHandler } from './error-handler.js';
+import { configureSecurity } from './security.js';
 
 // Load environment variables
 dotenv.config();
@@ -29,7 +30,11 @@ console.log(`🔗 Frontend URL: ${env.FRONTEND_URL}`);
 
 const app = fastify({
   logger: true,
+  trustProxy: true, // Trust X-Forwarded-For header for rate limiting
 });
+
+// Configure security (rate limiting, helmet, validation)
+await configureSecurity(app, env);
 
 // Enable CORS
 await app.register(cors, {

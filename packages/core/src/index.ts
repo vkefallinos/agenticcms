@@ -17,6 +17,7 @@ export { useStaticResource, type UseStaticResourceResult } from './hooks/useStat
 
 // Decorators & Utilities
 export { UIAction, getUIActions, type UIActionMetadata } from './shared/decorators';
+export * from './shared/permissions';
 
 // Backend
 export { executeAgentFlow } from './backend/agent-engine';

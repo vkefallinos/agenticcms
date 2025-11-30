@@ -8,8 +8,19 @@ import type { Env } from './env.js';
 const SALT_ROUNDS = 10;
 
 export function registerRoutes(app: FastifyInstance, env: Env) {
-  // Login endpoint
-  app.post('/api/auth/login', async (request, reply) => {
+  // Auth rate limiting config - stricter for login/register
+  const authRateLimitConfig = {
+    config: {
+      max: 5, // Only 5 attempts
+      timeWindow: '15 minutes',
+    },
+  };
+
+  // Login endpoint with strict rate limiting
+  app.post(
+    '/api/auth/login',
+    authRateLimitConfig,
+    async (request, reply) => {
     const { email, password } = request.body as { email: string; password: string };
 
     const userRepo = repo(User);
@@ -36,17 +47,18 @@ export function registerRoutes(app: FastifyInstance, env: Env) {
       env
     );
 
-    return {
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        credits: user.credits,
-      },
-    };
-  });
+      return {
+        token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          credits: user.credits,
+        },
+      };
+    }
+  );
 
   // Logout endpoint (with JWT, logout is handled client-side by removing token)
   app.post('/api/auth/logout', async (request, reply) => {
@@ -55,8 +67,11 @@ export function registerRoutes(app: FastifyInstance, env: Env) {
     return { success: true };
   });
 
-  // Register endpoint
-  app.post('/api/auth/register', async (request, reply) => {
+  // Register endpoint with strict rate limiting
+  app.post(
+    '/api/auth/register',
+    authRateLimitConfig,
+    async (request, reply) => {
     const { email, password, name, role } = request.body as {
       email: string;
       password: string;
@@ -95,17 +110,18 @@ export function registerRoutes(app: FastifyInstance, env: Env) {
       env
     );
 
-    return {
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        credits: user.credits,
-      },
-    };
-  });
+      return {
+        token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          credits: user.credits,
+        },
+      };
+    }
+  );
 
   // Mock payment endpoint - adds credits to user
   app.post('/api/credits/purchase', async (request, reply) => {

@@ -4,6 +4,7 @@ import type { Remult } from 'remult';
 import type { CoreTool } from 'ai';
 import { UIAction } from '../shared/decorators';
 import { executeAgentFlow } from '../backend/agent-engine';
+import { canManageContent } from '../shared/permissions';
 
 export type AgentStatus =
   | 'idle'
@@ -14,7 +15,10 @@ export type AgentStatus =
   | 'failed';
 
 @Entity('agent_resources', {
-  allowApiCrud: 'authenticated',
+  allowApiRead: 'authenticated',
+  allowApiInsert: (c?: Remult) => canManageContent(c?.user),
+  allowApiUpdate: 'authenticated', // Allow updates during AI generation
+  allowApiDelete: (c?: Remult) => canManageContent(c?.user),
 })
 export abstract class AgentResource extends BaseRecord {
   @Fields.string()

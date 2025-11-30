@@ -1,10 +1,14 @@
-import { Entity, Fields, Validators } from 'remult';
+import { Entity, Fields, Validators, type Remult } from 'remult';
 import { BaseRecord } from './BaseRecord';
+import { isAdmin } from '../shared/permissions';
 
 export type UserRole = 'admin' | 'school_admin' | 'teacher' | 'parent' | 'student';
 
 @Entity('users', {
-  allowApiCrud: 'authenticated',
+  allowApiRead: 'authenticated', // Users can read other users (needed for collaboration)
+  allowApiInsert: true, // Allow registration
+  allowApiUpdate: 'authenticated', // Users can update their own profile (validated in UI/backend)
+  allowApiDelete: (c?: Remult) => isAdmin(c?.user), // Only admins can delete users
 })
 export class User extends BaseRecord {
   @Fields.string({

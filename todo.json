@@ -1,7 +1,7 @@
 {
   "project": "AgenticCMS",
-  "version": "0.3.0",
-  "lastUpdated": "2025-11-29",
+  "version": "0.4.0",
+  "lastUpdated": "2025-11-30",
   "completedInIteration2": [
     "CRIT-001: JWT authentication implemented",
     "CRIT-002: Password hashing with bcrypt implemented",
@@ -13,6 +13,11 @@
     "CRIT-004: Comprehensive error handling implemented",
     "TEST-002: Unit tests for all core entities (192 tests)",
     "FEAT-003: StudentProfile entity added"
+  ],
+  "completedInIteration4": [
+    "CRIT-005: Rate limiting and API security implemented",
+    "DEV-001: Docker configuration completed",
+    "FEAT-001: Role-based access control (RBAC) implemented"
   ],
   "categories": {
     "critical": {
@@ -26,34 +31,12 @@
           "effort": "medium",
           "files": ["apps/api/src/server.ts"],
           "dependencies": []
-        },
-        {
-          "id": "CRIT-005",
-          "title": "Add rate limiting and API security",
-          "description": "Implement rate limiting, CSRF protection, and request validation",
-          "priority": "high",
-          "effort": "medium",
-          "files": ["apps/api/src/server.ts"],
-          "dependencies": ["CRIT-001"]
         }
       ]
     },
     "features": {
       "description": "New features to complete the PRD requirements",
       "tasks": [
-        {
-          "id": "FEAT-001",
-          "title": "Implement role-based access control (RBAC)",
-          "description": "Add permission checks for different user roles (admin, school_admin, teacher, parent, student)",
-          "priority": "high",
-          "effort": "high",
-          "files": [
-            "packages/core/src/entities/User.ts",
-            "packages/core/src/entities/StaticResource.ts",
-            "packages/core/src/shared/permissions.ts"
-          ],
-          "dependencies": ["CRIT-001"]
-        },
         {
           "id": "FEAT-002",
           "title": "Implement multi-tenant support with school isolation",
@@ -64,7 +47,7 @@
             "packages/core/src/entities/BaseRecord.ts",
             "apps/api/src/server.ts"
           ],
-          "dependencies": ["FEAT-001"]
+          "dependencies": []
         },
         {
           "id": "FEAT-004",
@@ -109,7 +92,7 @@
             "apps/api/src/routes/invitations.ts",
             "apps/web/src/app/invite/page.tsx"
           ],
-          "dependencies": ["FEAT-001"]
+          "dependencies": []
         },
         {
           "id": "FEAT-008",
@@ -121,7 +104,7 @@
             "apps/web/src/app/parent/page.tsx",
             "apps/web/src/app/student/page.tsx"
           ],
-          "dependencies": ["FEAT-001"]
+          "dependencies": []
         }
       ]
     },
@@ -264,19 +247,6 @@
       "description": "Deployment and infrastructure",
       "tasks": [
         {
-          "id": "DEV-001",
-          "title": "Create Docker configuration",
-          "description": "Add Dockerfile for API and web apps, docker-compose for local development",
-          "priority": "high",
-          "effort": "medium",
-          "files": [
-            "apps/api/Dockerfile",
-            "apps/web/Dockerfile",
-            "docker-compose.yml"
-          ],
-          "dependencies": []
-        },
-        {
           "id": "DEV-002",
           "title": "Set up CI/CD pipeline",
           "description": "Configure GitHub Actions for automated testing, linting, and deployment",
@@ -380,17 +350,19 @@
       "description": "Ready for production deployment with paying customers",
       "requiredTasks": [
         "CRIT-003",
-        "CRIT-005",
-        "FEAT-001",
         "FEAT-002",
         "FEAT-004",
         "TEST-003",
         "TEST-005",
-        "DEV-001",
         "DEV-002",
         "DEV-005"
       ],
-      "status": "0% complete (0/10 tasks done)"
+      "completedTasks": [
+        "CRIT-005",
+        "FEAT-001",
+        "DEV-001"
+      ],
+      "status": "30% complete (3/10 tasks done)"
     },
     {
       "name": "Full Feature Set",

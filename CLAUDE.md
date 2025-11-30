@@ -1,8 +1,8 @@
 # CLAUDE.md - Guide for AI Assistants
 
-**Last Updated:** November 29, 2025 (Iteration 3)
+**Last Updated:** November 30, 2025 (Iteration 4)
 **Project:** AgenticCMS - Code-First Headless CMS with AI Agent Integration
-**Status:** ✅ MVP Complete! Core Architecture + Security + Testing Complete, All 192 Tests Passing
+**Status:** ✅ MVP Complete! Production Security + RBAC + Docker Ready, All 192 Tests Passing, 30% Production Ready
 
 ## ⚠️ CRITICAL: MUST DO IN EVERY ITERATION
 
@@ -68,6 +68,23 @@ When completing an iteration, you MUST do ALL of the following:
    - Result: Had to remember everything
    - **Fix:** Update docs as you go
 
+### Iteration 4 Mistakes:
+
+1. **❌ Incorrect Remult Permission API**
+   - Used wrong function signature for entity permissions
+   - Result: TypeScript compilation errors
+   - **Fix:** Check framework docs for correct API: `(c?: Remult) => boolean`
+
+2. **❌ Missing Type Annotations**
+   - Lambda parameters without explicit types
+   - Result: TypeScript errors about unknown types
+   - **Fix:** Always annotate function parameters with types
+
+3. **❌ Overly Complex Permission Rules**
+   - Tried to pass entity instance to permission checks
+   - Result: Not supported by Remult API
+   - **Fix:** Start simple, only add complexity if framework supports it
+
 ## 🎯 Quick Context
 
 You are working on **AgenticCMS**, a TypeScript monorepo that implements a headless CMS where:
@@ -89,7 +106,9 @@ agenticcms/
 ├── iteration_1.md          # Iteration 1 documentation (architecture setup)
 ├── iteration_2.md          # Iteration 2 documentation (security improvements)
 ├── iteration_3.md          # Iteration 3 documentation (testing & error handling)
-├── todo.json               # Structured task list (38 remaining tasks, 10 completed)
+├── iteration_4.md          # Iteration 4 documentation (production security & deployment)
+├── docker-compose.yml      # Docker orchestration for local development
+├── todo.json               # Structured task list (35 remaining tasks, 13 completed)
 └── README.md               # User-facing documentation
 ```
 

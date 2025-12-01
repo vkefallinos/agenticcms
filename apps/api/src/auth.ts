@@ -30,6 +30,7 @@ export function createAuthMiddleware(env: Env) {
         id: decoded.userId,
         name: decoded.name,
         roles: decoded.roles,
+        schoolId: decoded.schoolId,
       };
     } catch (error) {
       // Invalid or expired token
@@ -43,16 +44,18 @@ interface JWTPayload {
   name: string;
   email: string;
   roles: string[];
+  schoolId?: string;
   iat: number;
   exp: number;
 }
 
-export function createToken(user: { id: string; name: string; email: string; role: string }, env: Env): string {
+export function createToken(user: { id: string; name: string; email: string; role: string; schoolId?: string }, env: Env): string {
   const payload: Omit<JWTPayload, 'iat' | 'exp'> = {
     userId: user.id,
     name: user.name,
     email: user.email,
     roles: [user.role],
+    schoolId: user.schoolId,
   };
 
   // Token expires in 7 days

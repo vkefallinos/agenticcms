@@ -46,8 +46,10 @@ COPY --from=builder /app/packages/core/package.json ./packages/core/
 # Copy Next.js build
 COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
-COPY --from=builder /app/apps/web/public ./apps/web/public
 COPY --from=builder /app/apps/web/package.json ./apps/web/
+
+# Copy public directory (contains static assets)
+COPY --from=builder /app/apps/web/public ./apps/web/public
 
 # Install production dependencies
 RUN pnpm install --prod --frozen-lockfile

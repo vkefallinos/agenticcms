@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: agenticcms-db-dev
+    environment:
+      POSTGRES_DB: agenticcms
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agenticcms-network
+
+  # API Server (Development)
+  api:
+    image: node:20-alpine
+    container_name: agenticcms-api-dev
+    working_dir: /app
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/agenticcms
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-key-min-32-characters-long-for-testing}
+      FRONTEND_URL: http://localhost:3000
+      PORT: 3001
+      HOST: 0.0.0.0
+    ports:
+      - "3001:3001"
+    volumes:
+      # Mount source code
+      - ./:/app
+      # Use named volumes for node_modules (performance)
+      - api_node_modules:/app/apps/api/node_modules
+      - core_node_modules:/app/packages/core/node_modules
+      - root_node_modules:/app/node_modules
+    command: sh -c "npm install -g pnpm@8.15.0 && pnpm install && pnpm --filter @agenticcms/core build && pnpm --filter api dev"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - agenticcms-network
+    restart: unless-stopped
+
+  # Web Application (Development)
+  web:
+    image: node:20-alpine
+    container_name: agenticcms-web-dev
+    working_dir: /app
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api
+      HOSTNAME: "0.0.0.0"
+      PORT: "3000"
+      NEXT_TELEMETRY_DISABLED: 1
+      # Enable hot reloading
+      WATCHPACK_POLLING: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source code
+      - ./:/app
+      # Use named volumes for node_modules and .next (performance)
+      - web_node_modules:/app/apps/web/node_modules
+      - web_next:/app/apps/web/.next
+      - core_node_modules:/app/packages/core/node_modules
+      - root_node_modules:/app/node_modules
+    command: sh -c "npm install -g pnpm@8.15.0 && pnpm install && pnpm --filter @agenticcms/core build && pnpm --filter web dev"
+    depends_on:
+      - api
+    networks:
+      - agenticcms-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data_dev:
+    driver: local
+  root_node_modules:
+  core_node_modules:
+  api_node_modules:
+  web_node_modules:
+  web_next:
+
+networks:
+  agenticcms-network:
+    driver: bridge

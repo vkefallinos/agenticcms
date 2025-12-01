@@ -106,6 +106,28 @@ cd apps/web
 pnpm dev
 ```
 
+### Alternative: Docker Development Setup
+
+If you prefer a fully containerized development environment with hot-reloading:
+
+```bash
+# 1. Copy environment file
+cp .env.dev .env
+
+# 2. Add your OpenAI API key to .env
+# Edit .env and replace with your actual key
+
+# 3. Start all services (includes PostgreSQL, API, Web)
+docker-compose -f docker-compose.dev.yml up
+```
+
+**Access:**
+- Frontend: http://localhost:3000
+- API: http://localhost:3001
+- Database: postgresql://postgres:postgres@localhost:5432/agenticcms
+
+**📖 See [DOCKER_DEV.md](./DOCKER_DEV.md) for detailed Docker development documentation.**
+
 ## 📖 Usage Guide
 
 ### 1. Register a New User
@@ -334,6 +356,7 @@ agenticcms/
 
 **Documentation:**
 - [CLAUDE.md](./CLAUDE.md) - AI assistant guide & architecture patterns
+- [DOCKER_DEV.md](./DOCKER_DEV.md) - Docker development environment guide
 - [PRD_GAP_ANALYSIS.md](./PRD_GAP_ANALYSIS.md) - PRD compliance analysis
 - [iteration_1.md](./iteration_1.md) - Architecture setup
 - [iteration_2.md](./iteration_2.md) - Security improvements

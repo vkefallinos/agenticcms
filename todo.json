@@ -1,7 +1,14 @@
 {
   "project": "AgenticCMS",
   "version": "0.4.0",
-  "lastUpdated": "2025-11-30",
+  "lastUpdated": "2025-12-01",
+  "prdCompliance": {
+    "overall": "85%",
+    "coreArchitecture": "100%",
+    "userFlows": "40%",
+    "multiTenancy": "50%",
+    "notes": "See PRD_GAP_ANALYSIS.md for detailed compliance report"
+  },
   "completedInIteration2": [
     "CRIT-001: JWT authentication implemented",
     "CRIT-002: Password hashing with bcrypt implemented",
@@ -31,6 +38,72 @@
           "effort": "medium",
           "files": ["apps/api/src/server.ts"],
           "dependencies": []
+        }
+      ]
+    },
+    "prd": {
+      "description": "Missing features from PRD to achieve 100% compliance",
+      "tasks": [
+        {
+          "id": "PRD-001",
+          "title": "Implement School Admin Dashboard",
+          "description": "PRD Section 7.3: Create dashboard for school admins to buy credits (UI for existing endpoint), view school resources, and manage teachers. Backend credit purchase endpoint already exists at /api/credits/purchase",
+          "priority": "high",
+          "effort": "medium",
+          "files": [
+            "apps/web/src/app/school-admin/page.tsx",
+            "apps/web/src/app/credits/page.tsx"
+          ],
+          "dependencies": [],
+          "prdSection": "7.3"
+        },
+        {
+          "id": "PRD-002",
+          "title": "Implement Super Admin Dashboard",
+          "description": "PRD Section 7.3: Create global admin dashboard with system-wide view, user management across all schools, and system metrics",
+          "priority": "medium",
+          "effort": "medium",
+          "files": ["apps/web/src/app/admin/page.tsx"],
+          "dependencies": [],
+          "prdSection": "7.3"
+        },
+        {
+          "id": "PRD-003",
+          "title": "Verify and enhance insufficient credits error handling",
+          "description": "PRD Section 7.3: Verify lesson page properly displays 'Insufficient Credits' error when startAgent fails due to low balance. Add user-friendly error message with link to credit purchase page",
+          "priority": "high",
+          "effort": "low",
+          "files": ["apps/web/src/app/lesson/[id]/page.tsx"],
+          "dependencies": ["PRD-001"],
+          "prdSection": "7.3"
+        },
+        {
+          "id": "PRD-004",
+          "title": "Enforce multi-tenancy with organizationId filtering",
+          "description": "PRD Section 4.2: StaticResource has organizationId field but queries are not filtered. Add automatic query filtering by organizationId to ensure data isolation between schools. CRITICAL for production security",
+          "priority": "critical",
+          "effort": "medium",
+          "files": [
+            "packages/core/src/entities/StaticResource.ts",
+            "apps/api/src/server.ts"
+          ],
+          "dependencies": [],
+          "prdSection": "4.2",
+          "notes": "Duplicate of FEAT-002 but marked as PRD compliance item"
+        },
+        {
+          "id": "PRD-005",
+          "title": "Create library consumer documentation",
+          "description": "PRD positions AgenticCMS as a headless library. Add documentation for consuming @agenticcms/core in external projects: hook usage, entity extension, custom agents. Update README to clarify reference app vs library usage",
+          "priority": "medium",
+          "effort": "low",
+          "files": [
+            "docs/LIBRARY_USAGE.md",
+            "README.md",
+            "packages/core/README.md"
+          ],
+          "dependencies": [],
+          "prdSection": "6"
         }
       ]
     },
@@ -84,27 +157,30 @@
         },
         {
           "id": "FEAT-007",
-          "title": "Add user invitation system",
-          "description": "Allow school admins to invite teachers, teachers to invite students/parents",
-          "priority": "medium",
+          "title": "Add user invitation system (PRD Requirement)",
+          "description": "PRD Section 7.2: Teachers invite students, school admins invite teachers. Create Invitation entity, email sending (or mock), acceptance flow, and role assignment. Required for PRD compliance",
+          "priority": "high",
           "effort": "medium",
           "files": [
+            "packages/core/src/entities/Invitation.ts",
             "apps/api/src/routes/invitations.ts",
             "apps/web/src/app/invite/page.tsx"
           ],
-          "dependencies": []
+          "dependencies": [],
+          "prdSection": "7.2"
         },
         {
           "id": "FEAT-008",
-          "title": "Implement parent and student views",
-          "description": "Create read-only dashboards for parents and students to view lessons",
-          "priority": "low",
+          "title": "Implement parent and student dashboards (PRD Requirement)",
+          "description": "PRD Section 7.3: Create read-only dashboards. Parent: view child's StudentProfile, classrooms, and lessons. Student: view their classrooms and lessons (filtered by enrollment). Required for PRD compliance",
+          "priority": "high",
           "effort": "medium",
           "files": [
             "apps/web/src/app/parent/page.tsx",
             "apps/web/src/app/student/page.tsx"
           ],
-          "dependencies": []
+          "dependencies": [],
+          "prdSection": "7.3"
         }
       ]
     },
@@ -346,10 +422,27 @@
       "status": "✅ 100% complete (7/7 tasks done)"
     },
     {
+      "name": "PRD Compliance (100%)",
+      "description": "Full compliance with Product Requirements Document",
+      "requiredTasks": [
+        "PRD-001",
+        "PRD-002",
+        "PRD-003",
+        "PRD-004",
+        "PRD-005",
+        "FEAT-007",
+        "FEAT-008"
+      ],
+      "completedTasks": [],
+      "status": "0% complete (0/7 tasks done)",
+      "notes": "Current PRD compliance: 85%. See PRD_GAP_ANALYSIS.md for details"
+    },
+    {
       "name": "Production Ready",
       "description": "Ready for production deployment with paying customers",
       "requiredTasks": [
         "CRIT-003",
+        "PRD-004",
         "FEAT-002",
         "FEAT-004",
         "TEST-003",
@@ -362,11 +455,12 @@
         "FEAT-001",
         "DEV-001"
       ],
-      "status": "30% complete (3/10 tasks done)"
+      "status": "27% complete (3/11 tasks done)",
+      "notes": "Multi-tenancy (PRD-004/FEAT-002) is CRITICAL for production"
     },
     {
       "name": "Full Feature Set",
-      "description": "All PRD features implemented",
+      "description": "All PRD features plus enhancements",
       "requiredTasks": [
         "FEAT-005",
         "FEAT-006",
@@ -383,6 +477,8 @@
     "Priority levels: critical > high > medium > low",
     "Effort estimates: low (1-4 hours), medium (4-8 hours), high (8+ hours)",
     "Dependencies must be completed before starting dependent tasks",
-    "All tasks should include unit tests where applicable"
+    "All tasks should include unit tests where applicable",
+    "PRD Compliance: See PRD_GAP_ANALYSIS.md for detailed gap analysis",
+    "PRD tasks marked with 'prdSection' field reference specific PRD sections"
   ]
 }

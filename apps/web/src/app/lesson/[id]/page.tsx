@@ -2,12 +2,14 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useAgentResource, LessonPlan } from '@agenticcms/core';
-import { ArrowLeft, Sparkles, Download, Loader2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Sparkles, Download, Loader2, AlertCircle, CreditCard } from 'lucide-react';
+import { useState } from 'react';
 
 export default function LessonPage() {
   const params = useParams();
   const router = useRouter();
   const lessonId = params.id as string;
+  const [creditError, setCreditError] = useState<string | null>(null);
 
   const { record: lesson, isLoading, artifacts, actions } = useAgentResource(
     LessonPlan,
@@ -15,11 +17,12 @@ export default function LessonPage() {
   );
 
   const handleStartAgent = async () => {
+    setCreditError(null); // Clear any previous errors
     try {
       await actions.startAgent.execute();
     } catch (error) {
       if (error instanceof Error && error.message.includes('Insufficient credits')) {
-        alert('Insufficient credits! You need at least 10 credits to generate a lesson plan.');
+        setCreditError('You need at least 10 credits to generate a lesson plan.');
       } else {
         console.error('Failed to start agent:', error);
         alert('Failed to start lesson generation. Please try again.');
@@ -95,12 +98,40 @@ export default function LessonPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Error Display */}
+            {/* Insufficient Credits Warning */}
+            {creditError && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+                <div className="flex items-start gap-3">
+                  <CreditCard size={24} className="text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-amber-900 mb-2">Insufficient Credits</h3>
+                    <p className="text-sm text-amber-700 mb-4">{creditError}</p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => router.push('/dashboard')}
+                        className="bg-amber-600 text-white px-4 py-2 rounded-md hover:bg-amber-700 text-sm font-medium flex items-center gap-2"
+                      >
+                        <CreditCard size={16} />
+                        Purchase Credits
+                      </button>
+                      <button
+                        onClick={() => setCreditError(null)}
+                        className="text-amber-700 hover:text-amber-900 text-sm font-medium"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Generation Error Display */}
             {lesson.error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
                 <AlertCircle size={20} className="text-red-600 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-red-900 mb-1">Error</h3>
+                  <h3 className="font-semibold text-red-900 mb-1">Generation Error</h3>
                   <p className="text-sm text-red-700">{lesson.error}</p>
                 </div>
               </div>

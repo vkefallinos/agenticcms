@@ -43,6 +43,7 @@ export function registerRoutes(app: FastifyInstance, env: Env) {
         name: user.name,
         email: user.email,
         role: user.role,
+        schoolId: user.schoolId,
       },
       env
     );
@@ -55,6 +56,7 @@ export function registerRoutes(app: FastifyInstance, env: Env) {
           email: user.email,
           role: user.role,
           credits: user.credits,
+          schoolId: user.schoolId,
         },
       };
     }
@@ -106,6 +108,7 @@ export function registerRoutes(app: FastifyInstance, env: Env) {
         name: user.name,
         email: user.email,
         role: user.role,
+        schoolId: user.schoolId,
       },
       env
     );
@@ -118,6 +121,7 @@ export function registerRoutes(app: FastifyInstance, env: Env) {
           email: user.email,
           role: user.role,
           credits: user.credits,
+          schoolId: user.schoolId,
         },
       };
     }

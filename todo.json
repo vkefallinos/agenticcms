@@ -1,13 +1,13 @@
 {
   "project": "AgenticCMS",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "lastUpdated": "2025-12-01",
   "prdCompliance": {
-    "overall": "85%",
+    "overall": "87%",
     "coreArchitecture": "100%",
     "userFlows": "40%",
-    "multiTenancy": "50%",
-    "notes": "See PRD_GAP_ANALYSIS.md for detailed compliance report"
+    "multiTenancy": "100%",
+    "notes": "Multi-tenancy enforcement complete! See PRD_GAP_ANALYSIS.md for detailed compliance report"
   },
   "completedInIteration2": [
     "CRIT-001: JWT authentication implemented",
@@ -25,6 +25,11 @@
     "CRIT-005: Rate limiting and API security implemented",
     "DEV-001: Docker configuration completed",
     "FEAT-001: Role-based access control (RBAC) implemented"
+  ],
+  "completedInIteration5": [
+    "PRD-003: Enhanced insufficient credits error handling with user-friendly UI",
+    "PRD-004: Multi-tenancy enforcement with automatic organizationId filtering (CRITICAL)",
+    "FEAT-002: Multi-tenant support with school isolation completed"
   ],
   "categories": {
     "critical": {
@@ -68,30 +73,6 @@
           "prdSection": "7.3"
         },
         {
-          "id": "PRD-003",
-          "title": "Verify and enhance insufficient credits error handling",
-          "description": "PRD Section 7.3: Verify lesson page properly displays 'Insufficient Credits' error when startAgent fails due to low balance. Add user-friendly error message with link to credit purchase page",
-          "priority": "high",
-          "effort": "low",
-          "files": ["apps/web/src/app/lesson/[id]/page.tsx"],
-          "dependencies": ["PRD-001"],
-          "prdSection": "7.3"
-        },
-        {
-          "id": "PRD-004",
-          "title": "Enforce multi-tenancy with organizationId filtering",
-          "description": "PRD Section 4.2: StaticResource has organizationId field but queries are not filtered. Add automatic query filtering by organizationId to ensure data isolation between schools. CRITICAL for production security",
-          "priority": "critical",
-          "effort": "medium",
-          "files": [
-            "packages/core/src/entities/StaticResource.ts",
-            "apps/api/src/server.ts"
-          ],
-          "dependencies": [],
-          "prdSection": "4.2",
-          "notes": "Duplicate of FEAT-002 but marked as PRD compliance item"
-        },
-        {
           "id": "PRD-005",
           "title": "Create library consumer documentation",
           "description": "PRD positions AgenticCMS as a headless library. Add documentation for consuming @agenticcms/core in external projects: hook usage, entity extension, custom agents. Update README to clarify reference app vs library usage",
@@ -110,18 +91,6 @@
     "features": {
       "description": "New features to complete the PRD requirements",
       "tasks": [
-        {
-          "id": "FEAT-002",
-          "title": "Implement multi-tenant support with school isolation",
-          "description": "Add organizationId filtering to all queries, ensure data isolation between schools",
-          "priority": "high",
-          "effort": "high",
-          "files": [
-            "packages/core/src/entities/BaseRecord.ts",
-            "apps/api/src/server.ts"
-          ],
-          "dependencies": []
-        },
         {
           "id": "FEAT-004",
           "title": "Implement Stripe integration for credit purchases",
@@ -427,23 +396,22 @@
       "requiredTasks": [
         "PRD-001",
         "PRD-002",
-        "PRD-003",
-        "PRD-004",
         "PRD-005",
         "FEAT-007",
         "FEAT-008"
       ],
-      "completedTasks": [],
-      "status": "0% complete (0/7 tasks done)",
-      "notes": "Current PRD compliance: 85%. See PRD_GAP_ANALYSIS.md for details"
+      "completedTasks": [
+        "PRD-003",
+        "PRD-004"
+      ],
+      "status": "29% complete (2/7 tasks done)",
+      "notes": "Current PRD compliance: ~87%. Multi-tenancy enforcement complete! See PRD_GAP_ANALYSIS.md for details"
     },
     {
       "name": "Production Ready",
       "description": "Ready for production deployment with paying customers",
       "requiredTasks": [
         "CRIT-003",
-        "PRD-004",
-        "FEAT-002",
         "FEAT-004",
         "TEST-003",
         "TEST-005",
@@ -453,10 +421,12 @@
       "completedTasks": [
         "CRIT-005",
         "FEAT-001",
+        "FEAT-002",
+        "PRD-004",
         "DEV-001"
       ],
-      "status": "27% complete (3/11 tasks done)",
-      "notes": "Multi-tenancy (PRD-004/FEAT-002) is CRITICAL for production"
+      "status": "50% complete (5/10 tasks done)",
+      "notes": "✅ Multi-tenancy (PRD-004/FEAT-002) complete! Critical security milestone achieved."
     },
     {
       "name": "Full Feature Set",

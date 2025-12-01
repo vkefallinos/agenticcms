@@ -1,13 +1,13 @@
 # CLAUDE.md - Guide for AI Assistants
 
-**Last Updated:** December 1, 2025 (Post-Iteration 4 PRD Analysis)
+**Last Updated:** December 1, 2025 (Post-Iteration 5 Multi-Tenancy)
 **Project:** AgenticCMS - Code-First Headless CMS with AI Agent Integration
-**Status:** ✅ MVP Complete! **85% PRD Compliant**, Production Security + RBAC + Docker Ready, All 192 Tests Passing
-**PRD Compliance:** 85% - See [PRD_GAP_ANALYSIS.md](./PRD_GAP_ANALYSIS.md) for detailed gap analysis
+**Status:** ✅ MVP Complete! **~87% PRD Compliant**, Multi-Tenancy Enforced (CRITICAL), All 192 Tests Passing
+**PRD Compliance:** ~87% - Multi-tenancy + credit error handling complete. See [PRD_GAP_ANALYSIS.md](./PRD_GAP_ANALYSIS.md)
 
 ## 📊 PRD Compliance Status
 
-**Overall Compliance: 85%** (as of December 1, 2025)
+**Overall Compliance: ~87%** (as of December 1, 2025 - Post Iteration 5)
 
 ### ✅ What Matches PRD (100% Complete)
 - ✅ **Core Architecture** - All technical stack requirements (TypeScript, Fastify, Remult, Vercel AI SDK, PostgreSQL, Next.js)
@@ -17,25 +17,24 @@
 - ✅ **User Roles** - All 5 roles defined (admin, school_admin, teacher, parent, student)
 - ✅ **Teacher User Flows** - Dashboard, Classroom View, Lesson Generator View
 - ✅ **Mock Payment System** - /api/credits/purchase endpoint
+- ✅ **Multi-Tenancy Enforcement** (NEW in Iteration 5) - Automatic organizationId filtering (PRD-004)
+- ✅ **Insufficient Credits UX** (NEW in Iteration 5) - User-friendly error with purchase link (PRD-003)
 
-### ❌ Missing from PRD (15% Gap)
-- ❌ **Parent & Student Dashboards** (PRD Section 7.3) - FEAT-008, PRD-003
+### ❌ Missing from PRD (~13% Gap)
+- ❌ **Parent & Student Dashboards** (PRD Section 7.3) - FEAT-008
 - ❌ **School Admin Dashboard** (PRD Section 7.3) - PRD-001
 - ❌ **Super Admin Dashboard** (PRD Section 7.3) - PRD-002
 - ❌ **User Invitation System** (PRD Section 7.2) - FEAT-007
-- ❌ **Multi-Tenancy Enforcement** (PRD Section 4.2) - PRD-004, FEAT-002 (CRITICAL)
-- ❌ **Credit Purchase UI** (PRD Section 7.3) - Part of PRD-001
 - ❌ **Library Consumer Docs** (PRD positioning) - PRD-005
 
 **📖 Full Analysis:** See [PRD_GAP_ANALYSIS.md](./PRD_GAP_ANALYSIS.md) for comprehensive compliance report.
 
 **🎯 To Achieve 100% PRD Compliance:**
 1. Implement missing user dashboards (Parent, Student, School Admin, Super Admin)
-2. Enforce multi-tenancy with organizationId filtering (CRITICAL for production)
-3. Add user invitation system
-4. Create library consumer documentation
+2. Add user invitation system (teachers invite students, admins invite teachers)
+3. Create library consumer documentation
 
-**Estimated Effort:** 6-9 days to achieve 100% PRD compliance.
+**Estimated Effort:** 4-6 days to achieve 100% PRD compliance (down from 6-9 days).
 
 ---
 
@@ -143,7 +142,8 @@ agenticcms/
 ├── iteration_2.md          # Iteration 2 documentation (security improvements)
 ├── iteration_3.md          # Iteration 3 documentation (testing & error handling)
 ├── iteration_4.md          # Iteration 4 documentation (production security & deployment)
-├── PRD_GAP_ANALYSIS.md     # PRD compliance analysis (85% complete)
+├── iteration_5.md          # Iteration 5 documentation (multi-tenancy enforcement)
+├── PRD_GAP_ANALYSIS.md     # PRD compliance analysis (~87% complete)
 ├── docker-compose.yml      # Docker orchestration for local development
 ├── todo.json               # Structured task list (5 PRD tasks + other tasks)
 └── README.md               # User-facing documentation
@@ -464,13 +464,14 @@ pnpm test:coverage
 
 **Before making changes, read these in order:**
 
-1. **PRD_GAP_ANALYSIS.md** - PRD compliance report (85% complete, missing features identified)
-2. **iteration_4.md** - Latest iteration (production security, RBAC, Docker)
-3. **iteration_3.md** - Testing & error handling (192 tests)
-4. **iteration_2.md** - Security & JWT authentication
-5. **iteration_1.md** - Initial architecture setup
-6. **todo.json** - Task list with PRD compliance tracking
-7. **README.md** - User-facing setup guide
+1. **PRD_GAP_ANALYSIS.md** - PRD compliance report (~87% complete, missing features identified)
+2. **iteration_5.md** - Latest iteration (multi-tenancy enforcement, credit UX)
+3. **iteration_4.md** - Production security, RBAC, Docker
+4. **iteration_3.md** - Testing & error handling (192 tests)
+5. **iteration_2.md** - Security & JWT authentication
+6. **iteration_1.md** - Initial architecture setup
+7. **todo.json** - Task list with PRD compliance tracking
+8. **README.md** - User-facing setup guide
 8. **packages/core/src/entities/AgentResource.ts** - Agent base class
 9. **packages/core/src/backend/agent-engine.ts** - Agent execution flow
 10. **packages/core/src/entities/LessonPlan.ts** - Reference AI agent implementation
@@ -485,21 +486,23 @@ pnpm test:coverage
 - ✅ Iteration 2: Security & JWT authentication
 - ✅ Iteration 3: Testing & error handling (192 tests!)
 - ✅ Iteration 4: Production security, RBAC, Docker
+- ✅ Iteration 5: Multi-tenancy enforcement (CRITICAL security) + Credit UX
 
 **🎯 New Milestone: PRD Compliance (100%)**
-**Status:** 0% complete (0/7 tasks) | **Current Compliance: 85%**
+**Status:** 29% complete (2/7 tasks) | **Current Compliance: ~87%**
 
-**Required for PRD Compliance:**
+**✅ Completed (Iteration 5):**
+- ✅ **PRD-003:** Insufficient Credits error handling (high priority)
+- ✅ **PRD-004:** Multi-tenancy enforcement (CRITICAL - data isolation)
+
+**❌ Remaining for PRD Compliance:**
 1. **PRD-001:** School Admin Dashboard (high priority)
 2. **PRD-002:** Super Admin Dashboard (medium priority)
-3. **PRD-003:** Verify "Insufficient Credits" error handling (high priority)
-4. **PRD-004:** Enforce multi-tenancy (CRITICAL - security risk without this)
-5. **PRD-005:** Library consumer documentation (medium priority)
-6. **FEAT-007:** User invitation system (high priority)
-7. **FEAT-008:** Parent & Student dashboards (high priority)
+3. **PRD-005:** Library consumer documentation (medium priority)
+4. **FEAT-007:** User invitation system (high priority)
+5. **FEAT-008:** Parent & Student dashboards (high priority)
 
 **Critical (must do before production):**
-- **PRD-004/FEAT-002:** Multi-tenancy enforcement (CRITICAL - data isolation)
 - CRIT-003: Database migrations support
 - TEST-003: Integration tests for agent flow
 - TEST-005: API endpoint tests

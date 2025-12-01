@@ -1,8 +1,43 @@
 # CLAUDE.md - Guide for AI Assistants
 
-**Last Updated:** November 30, 2025 (Iteration 4)
+**Last Updated:** December 1, 2025 (Post-Iteration 4 PRD Analysis)
 **Project:** AgenticCMS - Code-First Headless CMS with AI Agent Integration
-**Status:** ✅ MVP Complete! Production Security + RBAC + Docker Ready, All 192 Tests Passing, 30% Production Ready
+**Status:** ✅ MVP Complete! **85% PRD Compliant**, Production Security + RBAC + Docker Ready, All 192 Tests Passing
+**PRD Compliance:** 85% - See [PRD_GAP_ANALYSIS.md](./PRD_GAP_ANALYSIS.md) for detailed gap analysis
+
+## 📊 PRD Compliance Status
+
+**Overall Compliance: 85%** (as of December 1, 2025)
+
+### ✅ What Matches PRD (100% Complete)
+- ✅ **Core Architecture** - All technical stack requirements (TypeScript, Fastify, Remult, Vercel AI SDK, PostgreSQL, Next.js)
+- ✅ **All 9 Entities** - BaseRecord, StaticResource, AgentResource, Artifact, User, CreditTransaction, Classroom, LessonPlan, StudentProfile
+- ✅ **Agent Engine** - All 4 abstract methods + complete execution flow with 6 phases
+- ✅ **Headless Hooks** - useAgentResource, useStaticResource, @UIAction decorator
+- ✅ **User Roles** - All 5 roles defined (admin, school_admin, teacher, parent, student)
+- ✅ **Teacher User Flows** - Dashboard, Classroom View, Lesson Generator View
+- ✅ **Mock Payment System** - /api/credits/purchase endpoint
+
+### ❌ Missing from PRD (15% Gap)
+- ❌ **Parent & Student Dashboards** (PRD Section 7.3) - FEAT-008, PRD-003
+- ❌ **School Admin Dashboard** (PRD Section 7.3) - PRD-001
+- ❌ **Super Admin Dashboard** (PRD Section 7.3) - PRD-002
+- ❌ **User Invitation System** (PRD Section 7.2) - FEAT-007
+- ❌ **Multi-Tenancy Enforcement** (PRD Section 4.2) - PRD-004, FEAT-002 (CRITICAL)
+- ❌ **Credit Purchase UI** (PRD Section 7.3) - Part of PRD-001
+- ❌ **Library Consumer Docs** (PRD positioning) - PRD-005
+
+**📖 Full Analysis:** See [PRD_GAP_ANALYSIS.md](./PRD_GAP_ANALYSIS.md) for comprehensive compliance report.
+
+**🎯 To Achieve 100% PRD Compliance:**
+1. Implement missing user dashboards (Parent, Student, School Admin, Super Admin)
+2. Enforce multi-tenancy with organizationId filtering (CRITICAL for production)
+3. Add user invitation system
+4. Create library consumer documentation
+
+**Estimated Effort:** 6-9 days to achieve 100% PRD compliance.
+
+---
 
 ## ⚠️ CRITICAL: MUST DO IN EVERY ITERATION
 
@@ -98,17 +133,19 @@ You are working on **AgenticCMS**, a TypeScript monorepo that implements a headl
 agenticcms/
 ├── packages/core/          # Shared business logic (THE BRAIN)
 │   ├── src/entities/       # 9 entity classes (User, Classroom, StudentProfile, LessonPlan, etc.)
-│   ├── src/hooks/          # 2 headless React hooks
+│   ├── src/hooks/          # 2 headless React hooks (useAgentResource, useStaticResource)
 │   ├── src/backend/        # AI agent execution engine
-│   └── src/shared/         # @UIAction decorator system
+│   └── src/shared/         # @UIAction decorator system + permissions
 ├── apps/api/               # Fastify + Remult server (port 3001)
 ├── apps/web/               # Next.js 14 reference app (port 3000)
+│   └── src/app/            # 4 routes: home, dashboard, classroom/[id], lesson/[id]
 ├── iteration_1.md          # Iteration 1 documentation (architecture setup)
 ├── iteration_2.md          # Iteration 2 documentation (security improvements)
 ├── iteration_3.md          # Iteration 3 documentation (testing & error handling)
 ├── iteration_4.md          # Iteration 4 documentation (production security & deployment)
+├── PRD_GAP_ANALYSIS.md     # PRD compliance analysis (85% complete)
 ├── docker-compose.yml      # Docker orchestration for local development
-├── todo.json               # Structured task list (35 remaining tasks, 13 completed)
+├── todo.json               # Structured task list (5 PRD tasks + other tasks)
 └── README.md               # User-facing documentation
 ```
 
@@ -427,36 +464,50 @@ pnpm test:coverage
 
 **Before making changes, read these in order:**
 
-1. **iteration_2.md** - Latest iteration (security & infrastructure improvements)
-2. **iteration_1.md** - Initial iteration (architecture setup)
-3. **todo.json** - Task list (43 remaining tasks, 5 completed in iteration 2)
-4. **README.md** - User-facing setup guide
-5. **apps/api/src/env.ts** - Environment validation (NEW in iteration 2)
-6. **apps/api/src/auth.ts** - JWT authentication (UPDATED in iteration 2)
-7. **packages/core/src/entities/AgentResource.ts** - Agent base class
-8. **packages/core/src/backend/agent-engine.ts** - Agent execution flow
-9. **packages/core/src/entities/LessonPlan.ts** - Reference AI agent implementation
+1. **PRD_GAP_ANALYSIS.md** - PRD compliance report (85% complete, missing features identified)
+2. **iteration_4.md** - Latest iteration (production security, RBAC, Docker)
+3. **iteration_3.md** - Testing & error handling (192 tests)
+4. **iteration_2.md** - Security & JWT authentication
+5. **iteration_1.md** - Initial architecture setup
+6. **todo.json** - Task list with PRD compliance tracking
+7. **README.md** - User-facing setup guide
+8. **packages/core/src/entities/AgentResource.ts** - Agent base class
+9. **packages/core/src/backend/agent-engine.ts** - Agent execution flow
+10. **packages/core/src/entities/LessonPlan.ts** - Reference AI agent implementation
+11. **packages/core/src/shared/permissions.ts** - RBAC permission helpers (NEW in iteration 4)
+12. **apps/api/src/security.ts** - Rate limiting & security headers (NEW in iteration 4)
 
 ## 🎯 Current Priorities (from todo.json)
 
-**✅ Completed in Iteration 3:**
-- ✅ CRIT-004: Comprehensive error handling
-- ✅ TEST-002: Write unit tests for all entities (192 tests!)
-- ✅ FEAT-003: StudentProfile entity
+**✅ Completed Milestones:**
+- ✅ **MVP Milestone** - 100% complete (7/7 tasks) - Ready for beta testing!
+- ✅ Iteration 1: Architecture setup
+- ✅ Iteration 2: Security & JWT authentication
+- ✅ Iteration 3: Testing & error handling (192 tests!)
+- ✅ Iteration 4: Production security, RBAC, Docker
 
-**✅ MVP Milestone - COMPLETE! 🎉**
-All 7 MVP tasks done! Ready for beta testing.
+**🎯 New Milestone: PRD Compliance (100%)**
+**Status:** 0% complete (0/7 tasks) | **Current Compliance: 85%**
+
+**Required for PRD Compliance:**
+1. **PRD-001:** School Admin Dashboard (high priority)
+2. **PRD-002:** Super Admin Dashboard (medium priority)
+3. **PRD-003:** Verify "Insufficient Credits" error handling (high priority)
+4. **PRD-004:** Enforce multi-tenancy (CRITICAL - security risk without this)
+5. **PRD-005:** Library consumer documentation (medium priority)
+6. **FEAT-007:** User invitation system (high priority)
+7. **FEAT-008:** Parent & Student dashboards (high priority)
 
 **Critical (must do before production):**
+- **PRD-004/FEAT-002:** Multi-tenancy enforcement (CRITICAL - data isolation)
 - CRIT-003: Database migrations support
-- CRIT-005: Rate limiting and API security
-
-**High Value (for Production):**
-- FEAT-001: Role-based access control (unblocked by JWT)
-- FEAT-002: Multi-tenant support
 - TEST-003: Integration tests for agent flow
 - TEST-005: API endpoint tests
-- DEV-001: Docker configuration
+
+**High Value:**
+- PRD-001: School Admin Dashboard (enables credit purchase UI)
+- FEAT-007: User invitation system (enables multi-user collaboration)
+- FEAT-008: Parent & Student dashboards (completes all user roles)
 - DEV-002: CI/CD pipeline
 
 ## 💡 Tips for Working with This Codebase

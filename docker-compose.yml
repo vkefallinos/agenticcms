@@ -49,9 +49,12 @@ services:
       context: .
       dockerfile: apps/web/Dockerfile
     container_name: agenticcms-web
+    hostname: agenticcms-web
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: http://localhost:3001/api
+      HOSTNAME: "0.0.0.0"
+      PORT: "3000"
     ports:
       - "3000:3000"
     depends_on:

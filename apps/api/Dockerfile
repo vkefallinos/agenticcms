@@ -34,14 +34,17 @@ WORKDIR /app
 # Copy workspace files
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Copy built packages
+# Copy built core package (including all necessary files for workspace linking)
 COPY --from=builder /app/packages/core/dist ./packages/core/dist
-COPY --from=builder /app/packages/core/package.json ./packages/core/
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/apps/api/package.json ./apps/api/
+COPY --from=builder /app/packages/core/package.json ./packages/core/package.json
+COPY --from=builder /app/packages/core/node_modules ./packages/core/node_modules
 
-# Install production dependencies only
-RUN pnpm install --prod --frozen-lockfile
+# Copy built API app
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+
+# Install production dependencies only (this will link workspace packages)
+RUN pnpm install --prod --frozen-lockfile --shamefully-hoist
 
 WORKDIR /app/apps/api
 
